@@ -1,24 +1,26 @@
 package com.soa.service;
 
 import com.soa.converter.VehicleConverter;
+import com.soa.dto.FilterQueryDto;
 import com.soa.dto.VehicleDto;
 import com.soa.dto.VehicleType;
 import com.soa.entity.VehicleEntity;
 import com.soa.exception.EntityNotFoundException;
+import com.soa.filter.FilterService;
 import com.soa.service.db.VehicleDbService;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class VehicleService {
     private VehicleConverter vehicleConverter;
     private VehicleDbService vehicleDbService;
+    private PageService pageService;
 
     public VehicleDto createVehicle(VehicleDto vehicleDto) {
         vehicleDto.setId(null);
@@ -27,6 +29,16 @@ public class VehicleService {
 
     public VehicleDto updateVehicle(VehicleDto vehicleDto) {
         VehicleEntity vehicle = vehicleConverter.convertToEntity(vehicleDto);
+        vehicle = vehicleDbService.saveVehicle(vehicle);
+        return vehicleConverter.convertToDto(vehicle);
+    }
+
+    public VehicleDto addVehicleWheels(Integer vehicleId, Integer numberOfWheels) {
+        if (numberOfWheels <= 0) {
+            throw new IllegalArgumentException("Количество добавляемых колес должно быть больше 0");
+        }
+        VehicleEntity vehicle = vehicleDbService.findById(vehicleId).orElseThrow(EntityNotFoundException::new);
+        vehicle.setNumberOfWheels(vehicle.getNumberOfWheels() + numberOfWheels);
         vehicle = vehicleDbService.saveVehicle(vehicle);
         return vehicleConverter.convertToDto(vehicle);
     }
@@ -53,7 +65,9 @@ public class VehicleService {
     }
 
 
-    public List<VehicleDto> getVehicles(Map<String, String> requestParams) {
-        return vehicleDbService.getVehicles(requestParams).stream().map(v -> vehicleConverter.convertToDto(v)).toList();
+    public List<VehicleDto> getVehicles(FilterQueryDto dto) {
+        FilterService.isValidRequestParams(dto);
+        PageRequest request = pageService.getPageRequest(dto.getLimit(), dto.getOffset(), dto.getSort());
+        return vehicleDbService.getVehicles(dto, request).stream().map(v -> vehicleConverter.convertToDto(v)).toList();
     }
 }

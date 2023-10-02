@@ -1,39 +1,39 @@
 package com.soa.filter;
 
-import com.soa.dto.FuelType;
-import com.soa.dto.VehicleType;
+import com.soa.dto.FilterQueryDto;
 import com.soa.exception.NotValidParamsException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.Map;
+import java.math.BigDecimal;
 
 @Service
 @AllArgsConstructor
 public class FilterService {
-    public static void isValidRequestParams(Map<String, String> requestParams) {
-        for (String key : requestParams.keySet()) {
-            switch (key) {
-                case "id" -> checkValidId(requestParams.get(key));
-                case "name" -> checkValidName(requestParams.get(key));
-                case "coordinates_x", "coordinates_y" -> checkValidCoordinates(requestParams.get(key));
-                case "creation_date" -> checkCreationDate(requestParams.get(key));
-                case "sort" -> checkSortParams(requestParams.get(key));
-                case "engine_power" -> checkValidEnginePower(requestParams.get(key));
-                case "limit", "offset" -> checkValidPageParams(requestParams.get(key));
-                case "type" -> {
-                    requestParams.put(requestParams.get(key), requestParams.get(key).toUpperCase(Locale.ROOT));
-                    checkValidVehicleType(requestParams.get(key));
-                }
-                case "fuel_type" -> {
-                    requestParams.put(requestParams.get(key), requestParams.get(key).toUpperCase(Locale.ROOT));
-                    checkValidFuelType(requestParams.get(key));
-                }
-                default -> throw new NotValidParamsException("Введен невалидный набор параметров для фильтрации");
-            }
+    public static void isValidRequestParams(FilterQueryDto dto) {
+        if (dto.getId() != null) {
+            checkNumberIsPositive("Id", dto.getId());
+        }
+        if (dto.getName() != null) {
+            checkValidName(dto.getName());
+        }
+        if (dto.getSort() != null) {
+            checkSortParams(dto.getSort());
+        }
+        if (dto.getMinEnginePower() != null) {
+            checkValidEnginePower(dto.getMinEnginePower());
+        }
+        if (dto.getMaxEnginePower() != null) {
+            checkValidEnginePower(dto.getMaxEnginePower());
+        }
+        if (dto.getMaxEnginePower() != null && dto.getMinEnginePower() != null) {
+            checkMinEnginePowerIsSmallerThanMaxEnginePower(dto.getMinEnginePower(), dto.getMaxEnginePower());
+        }
+        if (dto.getLimit() != null) {
+            checkNumberIsPositive("Limit", dto.getLimit());
+        }
+        if (dto.getOffset() != null) {
+            checkNumberIsPositive("Offset", dto.getOffset());
         }
     }
 
@@ -44,13 +44,6 @@ public class FilterService {
         }
     }
 
-    public static void checkCreationDate(String date) {
-        checkEmpty(date);
-        if (!isValidDate(date)) {
-            throw new NotValidParamsException("Неверная дата создания");
-        }
-    }
-
     public static void checkSortParams(String sort) {
         checkEmpty(sort);
         if (!(sort.equals("asc") || sort.equals("desc"))) {
@@ -58,48 +51,21 @@ public class FilterService {
         }
     }
 
-    public static void checkValidCoordinates(String coordinates) {
-        checkEmpty(coordinates);
-        if (!isNumeric(coordinates)) {
-            throw new NotValidParamsException("Координаты должны быть числами");
+    public static void checkNumberIsPositive(String nameOfField, Integer number) {
+        if (number <= 0) {
+            throw new NotValidParamsException(nameOfField + " должен быть больше 0");
         }
     }
 
-    public static void checkValidPageParams(String param) {
-        checkEmpty(param);
-        if (!isIntegerValue(param)) {
-            throw new NotValidParamsException("Параметры пагинации должны быть целыми числами");
+    public static void checkMinEnginePowerIsSmallerThanMaxEnginePower(BigDecimal min, BigDecimal max) {
+        if (max.compareTo(min) < 0) {
+            throw new NotValidParamsException("Максимальное значение мощности должно быть меньше минимального");
         }
     }
 
-    public static void checkValidId(String id) {
-        checkEmpty(id);
-        if (!isIntegerValue(id)) {
-            throw new NotValidParamsException("ID должен быть целым числом");
-        }
-    }
-
-    public static void checkValidEnginePower(String enginePower) {
-        checkEmpty(enginePower);
-        if (!isNumeric(enginePower)) {
-            throw new NotValidParamsException("Сила двигателя должна быть числом");
-        }
-        if (Double.parseDouble(enginePower) <= 0) {
+    public static void checkValidEnginePower(BigDecimal enginePower) {
+        if (enginePower.compareTo(BigDecimal.valueOf(0L)) < 0) {
             throw new NotValidParamsException("Сила двигателя должна быть больше 0");
-        }
-    }
-
-    public static void checkValidVehicleType(String type) {
-        checkEmpty(type);
-        if (!isValidEnum(type, VehicleType.class)) {
-            throw new NotValidParamsException("Неверно указан тип машины");
-        }
-    }
-
-    public static void checkValidFuelType(String type) {
-        checkEmpty(type);
-        if (!isValidEnum(type, FuelType.class)) {
-            throw new NotValidParamsException("Неверно указан тип топлива машины");
         }
     }
 
@@ -107,44 +73,5 @@ public class FilterService {
         if (value == null || value.isBlank()) {
             throw new NotValidParamsException("Поля не должны быть пустыми");
         }
-    }
-
-    public static boolean isNumeric(String value) {
-        try {
-            Double.parseDouble(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    public static boolean isIntegerValue(String value) {
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    public static boolean isValidDate(String inDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyyThh:mm:ss:mmZ");
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(inDate.trim());
-        } catch (ParseException pe) {
-            return false;
-        }
-        return true;
-    }
-
-    public static <E extends Enum<E>> boolean isValidEnum(String type, Class<E> enumData) {
-        for (Enum<E> value : enumData.getEnumConstants()) {
-            if (value.name().equals(type)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -19,7 +19,8 @@ public class VehicleConverter {
                 .setCreationDate(dto.getCreationDate())
                 .setEnginePower(dto.getEnginePower())
                 .setType(dto.getType())
-                .setFuelType(dto.getFuelType());
+                .setFuelType(dto.getFuelType())
+                .setNumberOfWheels(dto.getNumberOfWheels());
         return entity;
     }
 
@@ -32,7 +33,8 @@ public class VehicleConverter {
                 .setCreationDate(entity.getCreationDate())
                 .setEnginePower(entity.getEnginePower())
                 .setType(entity.getType())
-                .setFuelType(entity.getFuelType());
+                .setFuelType(entity.getFuelType())
+                .setNumberOfWheels(entity.getNumberOfWheels());
         return dto;
     }
 }

@@ -1,5 +1,6 @@
 package com.soa.controller;
 
+import com.soa.dto.FilterQueryDto;
 import com.soa.dto.VehicleDto;
 import com.soa.service.VehicleService;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/vehicles")
@@ -23,12 +23,18 @@ public class VehicleController {
 
     @PutMapping
     public ResponseEntity<VehicleDto> updateVehicle(@RequestBody @Valid VehicleDto vehicleDto) {
-        return ResponseEntity.status(201).body(vehicleService.updateVehicle(vehicleDto));
+        return ResponseEntity.status(200).body(vehicleService.updateVehicle(vehicleDto));
+    }
+
+    @PatchMapping("/{vehicle-id}/add-wheels/{number_of_wheels}")
+    public ResponseEntity<VehicleDto> updateVehicle(@PathVariable(name = "vehicle-id") Integer id, @PathVariable(name = "number_of_wheels") Integer numberOfWheels) {
+        return ResponseEntity.status(200).body(vehicleService.addVehicleWheels(id, numberOfWheels));
     }
 
     @GetMapping
-    public ResponseEntity<List<VehicleDto>> getVehicles(@RequestParam Map<String, String> requestParams) {
-        return ResponseEntity.status(200).body(vehicleService.getVehicles(requestParams));
+    public ResponseEntity<List<VehicleDto>> getVehicles(FilterQueryDto dto) {
+        System.out.println(dto.toString());
+        return ResponseEntity.status(200).body(vehicleService.getVehicles(dto));
     }
 
     @GetMapping("/{vehicle-id}")

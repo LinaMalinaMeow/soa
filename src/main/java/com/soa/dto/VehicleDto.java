@@ -28,4 +28,5 @@ public class VehicleDto {
     private VehicleType type;
     @NotNull
     private FuelType fuelType;
+    private Integer numberOfWheels = 0;
 }
