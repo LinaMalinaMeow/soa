@@ -2,6 +2,7 @@ package com.soa.controller;
 
 import com.soa.dto.FilterQueryDto;
 import com.soa.dto.VehicleDto;
+import com.soa.dto.VehiclesListDTO;
 import com.soa.service.VehicleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class VehicleController {
         return ResponseEntity.status(200).body(vehicleService.updateVehicle(vehicleDto));
     }
 
-    @PatchMapping("/{vehicle-id}/add-wheels/{number_of_wheels}")
+    @GetMapping("/{vehicle-id}/add-wheels/{number_of_wheels}")
     public ResponseEntity<VehicleDto> updateVehicle(@PathVariable(name = "vehicle-id") Integer id, @PathVariable(name = "number_of_wheels") Integer numberOfWheels) {
         return ResponseEntity.status(200).body(vehicleService.addVehicleWheels(id, numberOfWheels));
     }
@@ -36,6 +37,11 @@ public class VehicleController {
     public ResponseEntity<List<VehicleDto>> getVehicles(FilterQueryDto dto) {
         System.out.println(dto.toString());
         return ResponseEntity.status(200).body(vehicleService.getVehicles(dto));
+    }
+    @GetMapping("/new")
+    public ResponseEntity<VehiclesListDTO> getVehicles2(FilterQueryDto dto) {
+        System.out.println(dto.toString());
+        return ResponseEntity.status(200).body(vehicleService.getVehicles2(dto));
     }
 
     @GetMapping("/{vehicle-id}")

@@ -4,6 +4,7 @@ import com.soa.converter.VehicleConverter;
 import com.soa.dto.FilterQueryDto;
 import com.soa.dto.VehicleDto;
 import com.soa.dto.VehicleType;
+import com.soa.dto.VehiclesListDTO;
 import com.soa.entity.VehicleEntity;
 import com.soa.exception.EntityNotFoundException;
 import com.soa.filter.FilterService;
@@ -69,5 +70,10 @@ public class VehicleService {
         FilterService.isValidRequestParams(dto);
         PageRequest request = pageService.getPageRequest(dto.getLimit(), dto.getOffset(), dto.getSort());
         return vehicleDbService.getVehicles(dto, request).stream().map(v -> vehicleConverter.convertToDto(v)).toList();
+    }
+    public VehiclesListDTO getVehicles2(FilterQueryDto dto) {
+        FilterService.isValidRequestParams(dto);
+        PageRequest request = pageService.getPageRequest(dto.getLimit(), dto.getOffset(), dto.getSort());
+        return new VehiclesListDTO(vehicleDbService.getVehicles(dto, request).stream().map(v -> vehicleConverter.convertToDto(v)).toList());
     }
 }
