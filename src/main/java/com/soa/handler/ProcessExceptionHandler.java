@@ -27,31 +27,31 @@ public class ProcessExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ResponseEntity<?> handleException(Exception e) {
         return ResponseEntity.status(400)
-                .body(errorMessage.setMessage(e.getMessage()));
+                .body(errorMessage.setMessage("Что-то пошло не так."));
     }
 
     @ExceptionHandler({EntityNotFoundException.class})
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e) {
         return ResponseEntity.status(404)
-                .body(errorMessage.setMessage(e.getMessage()));
+                .body(errorMessage.setMessage("Запрашиваемый ресурс не найден."));
     }
 
     @ExceptionHandler({NotValidParamsException.class})
     public ResponseEntity<?> handleNotValidParamsException(NotValidParamsException e) {
         return ResponseEntity.status(400)
-                .body(errorMessage.setMessage(e.getMessage()));
+                .body(errorMessage.setMessage("Невалидные параметры в запросе."));
     }
 
     @ExceptionHandler({DateTimeParseException.class})
     public ResponseEntity<?> handleDateTimeParseException(DateTimeParseException e) {
         return ResponseEntity.status(422)
-                .body(errorMessage.setMessage(e.getMessage()));
+                .body(errorMessage.setMessage("Что-то пошло не так в теле запроса."));
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return ResponseEntity.status(422)
-                .body(errorMessage.setMessage(e.getMessage()));
+                .body(errorMessage.setMessage("Что-то пошло не так в теле запроса."));
     }
 
 

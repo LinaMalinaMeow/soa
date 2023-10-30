@@ -54,7 +54,7 @@ public class VehicleDbService {
         vehicleRepository.removeAllByType(type);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<VehicleEntity> getVehicles(FilterQueryDto dto, Pageable pageable) {
         return vehicleRepository.getVehiclesWithFiltering(dto, pageable);
     }

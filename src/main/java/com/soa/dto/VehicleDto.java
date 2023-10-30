@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,17 +18,17 @@ import java.time.Instant;
 public class VehicleDto {
     private Integer id;
     @NotBlank
-    @Size(min = 3)
     private String name;
     @NotNull
+    @Valid
     private CoordinatesDto coordinates;
     @NotNull
     private Instant creationDate;
     @NotNull
+    @Min(0)
     private BigDecimal enginePower;
     @NotNull
     private VehicleType type;
-    @NotNull
     private FuelType fuelType;
     private Integer numberOfWheels = 0;
 }
