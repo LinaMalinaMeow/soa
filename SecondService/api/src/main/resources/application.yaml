@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: soa2
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    root: trace

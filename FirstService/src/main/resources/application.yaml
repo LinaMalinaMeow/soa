@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:15432}/postgres
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  application:
+    name: soa
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      discovery:
+        instanceId: ${spring.application.name}:${random.value}
+        healthCheckPath: /health
+        healthCheckInterval: 20s
+server:
+  port: ${SERVER_PORT:8088}

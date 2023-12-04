@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,IAAI,AAAC,CACD,OAAO,CAAE,IAAI,CACb,WAAW,CAAE,MAAM,CAOQ,AAT/B,AAGI,IAHA,CAGA,CAAC,AAAC,CACE,eAAe,CAAE,IAAI,CACrB,SAAS,CAAE,IAAI,CACf,UAAU,CAAE,QAAQ,CACpB,OAAO,CAAE,IAAI,CAEQ,AAT7B,AAQQ,IARJ,CAGA,CAAC,AAKI,MAAM,AAAC,CACJ,OAAO,CAAE,GAAG,CAAG",
+    "sources": [
+        "../src/components/Navigation.sass"
+    ],
+    "names": [],
+    "file": "Navigation.min.css"
+}
